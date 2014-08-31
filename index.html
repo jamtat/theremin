@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Theremin</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="//js.leapmotion.com/leap-0.6.2.js"></script>
+		<script src="//js.leapmotion.com/leap-plugins-0.1.7.js"></script>
+		<script src="theremin.js"></script>
+		<script>window.addEventListener('DOMContentLoaded', function() {
+			var t = theremin()
+			t.init()
+		})</script>
+		<link rel=stylesheet href=theremin.css>
+	</head>
+	<body>
+		
+		<div id=volume></div>
+		<div id=pitch></div>
+		
+	</body>
+</html>
