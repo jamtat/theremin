@@ -13,12 +13,20 @@ var theremin = function() {
 			
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			var context = this.context = new AudioContext()
+			
+			//Oscillator
 			var oscillator = this.oscillator = context.createOscillator()
+			
+			//Gain node
 			var gain = this.gain = context.createGain()
 			this.setGain(0)
 			
+			//Compressor
+			var compressor = this.compressor = context.createDynamicsCompressor();
 			
-			oscillator.connect(gain)
+			
+			oscillator.connect(compressor)
+			compressor.connect(gain)
 			gain.connect(context.destination)
 			
 			oscillator.type = 'sawtooth';
@@ -38,8 +46,17 @@ var theremin = function() {
 				switch (hand.type) {
 					case "right":
 						right = true
+						var roll = r2d(hand.roll())
+						
 						self.rightHand(
-							interactionBox.normalizePoint(hand.palmPosition)[1]
+							//Volume
+							interactionBox.normalizePoint(hand.palmPosition)[1],
+							
+							//Wave type
+							/*5-hand.pointables.reduce(function(a,b) {
+								return a+b.extended
+							},0)*/
+							Math.abs(roll)/30
 						)
 						break;
 					case "left":
@@ -59,9 +76,10 @@ var theremin = function() {
 				
 		},
 
-		rightHand: function(y) {
+		rightHand: function(y, w) {
 			scale(volumeOut, 1, y)
 			this.setGain(y)
+			this.setWaveType(w)
 		},
 
 		leftHand: function(x) {
@@ -77,8 +95,24 @@ var theremin = function() {
 		setPitch: function(pitch) {
 			var freq = lerp(20,900,pitch)
 			this.oscillator.frequency.value = freq
+		},
+		
+		waves: [
+			'sine',
+			'square',
+			'sawtooth',
+			'triangle'
+		],
+		
+		setWaveType: function(w) {
+			w = Math.max(0,Math.min(w,3))|0
+			this.oscillator.type = this.waves[w]
 		}
 	}
+}
+
+function r2d(rad) {
+	return rad*180/Math.PI
 }
 
 function lerp(a,b,t) {
